@@ -1,8 +1,11 @@
-import pages from '@hono/vite-cloudflare-pages'
-import adapter from '@hono/vite-dev-server/cloudflare'
 import honox from 'honox/vite'
+import ssg from '@hono/vite-ssg'
 import { defineConfig } from 'vite'
 
-export default defineConfig({
-  plugins: [honox({ devServer: { adapter } }), pages()]
+const entry = './app/server.ts'
+
+export default defineConfig(() => {
+  return {
+    plugins: [honox(), ssg({ entry })]
+  }
 })
