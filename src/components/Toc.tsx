@@ -4,20 +4,8 @@ import { useEffect, useRef } from "react";
 import tocbot from "tocbot";
 
 type TocProps = {
-  /**
-   * 目次の対象となるコンテンツのセレクタ
-   * @default '.prose'
-   */
   contentSelector?: string;
-  /**
-   * 目次に表示する見出しレベル
-   * @default '2, 3, 4'
-   */
   headingSelector?: string;
-  /**
-   * 目次を表示するコンテナのセレクタ
-   * @default '#toc'
-   */
   tocSelector?: string;
 };
 
@@ -54,7 +42,9 @@ export default function Toc({
         // 最初の見出しレベルを1に固定
         orderedList: false,
         // スクロールオフセット
-        scrollSmoothOffset: -70,
+        // scrollSmoothOffset: -70,
+        // 目次の深さを制限
+        collapseDepth: 3,
       });
 
       initialized.current = true;
