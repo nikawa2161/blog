@@ -1,6 +1,7 @@
 // next.config.mjs
 import createMDX from "@next/mdx";
 import remarkGfm from "remark-gfm";
+import rehypePrettyCode from "rehype-pretty-code";
 import path from "path";
 
 /** @type {import('next').NextConfig} */
@@ -18,6 +19,14 @@ const nextConfig = {
 const withMDX = await createMDX({
   options: {
     remarkPlugins: [remarkGfm],
+    rehypePlugins: [
+      [
+        rehypePrettyCode,
+        {
+          theme: "aurora-x",
+        },
+      ],
+    ],
   },
 });
 
