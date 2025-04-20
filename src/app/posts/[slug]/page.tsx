@@ -1,3 +1,6 @@
+import fs from "fs";
+import path from "path";
+
 export default async function Page({
   params,
 }: {
@@ -10,7 +13,14 @@ export default async function Page({
 }
 
 export function generateStaticParams() {
-  return [{ slug: "2025-04-18-setup" }];
+  const postsDir = path.join(process.cwd(), "src", "posts");
+  const filenames = fs.readdirSync(postsDir);
+
+  return filenames
+    .filter((file) => file.endsWith(".mdx"))
+    .map((file) => ({
+      slug: file.replace(/\.mdx$/, ""),
+    }));
 }
 
 export const dynamicParams = false;
