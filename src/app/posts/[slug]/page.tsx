@@ -10,7 +10,7 @@ export default async function Page({
   const { default: Post } = await import(`@/posts/${slug}.mdx`);
 
   return (
-    <article className="prose">
+    <article className="prose prose-sm sm:prose lg:prose-lg xl:prose-xl prose-indigo">
       <h1>{slug}</h1>
       <Post />
     </article>
