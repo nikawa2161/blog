@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
+@import "tocbot/dist/tocbot.css";
 
 /* :root {
   --background: #ffffff;

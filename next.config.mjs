@@ -2,6 +2,7 @@
 import createMDX from "@next/mdx";
 import remarkGfm from "remark-gfm";
 import rehypePrettyCode from "rehype-pretty-code";
+import rehypeSlug from "rehype-slug";
 import path from "path";
 
 /** @type {import('next').NextConfig} */
@@ -26,6 +27,7 @@ const withMDX = await createMDX({
           theme: "aurora-x",
         },
       ],
+      rehypeSlug,
     ],
   },
 });
