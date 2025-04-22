@@ -14,10 +14,7 @@ export default async function Page({
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="flex flex-col md:flex-row gap-8">
-        <aside className="md:w-1/4 md:sticky md:top-0 md:h-screen md:pt-8">
-          <Toc contentSelector=".article-content" />
-        </aside>
+      <div className="flex flex-col-reverse md:flex-row gap-8">
         <main className="md:w-3/4">
           <article className="article-content prose prose-sm sm:prose lg:prose-lg xl:prose-xl prose-indigo">
             <h1>{meta.title || slug}</h1>
@@ -44,6 +41,9 @@ export default async function Page({
             <Post />
           </article>
         </main>
+        <aside className="md:w-1/4 md:sticky md:top-0 md:h-screen md:pt-8">
+          <Toc contentSelector=".article-content" />
+        </aside>
       </div>
     </div>
   );
