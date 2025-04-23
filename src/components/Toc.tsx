@@ -4,65 +4,65 @@ import { useEffect, useRef } from "react";
 import tocbot from "tocbot";
 
 type TocProps = {
-  contentSelector?: string;
-  headingSelector?: string;
-  tocSelector?: string;
+	contentSelector?: string;
+	headingSelector?: string;
+	tocSelector?: string;
 };
 
 export default function Toc({
-  contentSelector = ".prose",
-  headingSelector = "h2, h3, h4",
-  tocSelector = "#toc",
+	contentSelector = ".prose",
+	headingSelector = "h2, h3, h4",
+	tocSelector = "#toc",
 }: TocProps) {
-  const initialized = useRef(false);
+	const initialized = useRef(false);
 
-  useEffect(() => {
-    if (!initialized.current) {
-      tocbot.init({
-        // 目次を表示するコンテナ
-        tocSelector,
-        // 目次の対象となるコンテンツ
-        contentSelector,
-        // 目次に含める見出し要素
-        headingSelector,
-        // 見出しの階層を示すためのHTML要素
-        hasInnerContainers: true,
-        // スクロール時のスムーズスクロール
-        scrollSmooth: true,
-        // 目次のリンククラス
-        linkClass: "toc-link",
-        // アクティブなリンククラス
-        activeLinkClass: "is-active-link",
-        // 目次のリストクラス
-        listClass: "toc-list",
-        // アクティブなリストアイテムクラス
-        activeListItemClass: "is-active-li",
-        // 階層を持つリストクラス
-        listItemClass: "toc-list-item",
-        // 最初の見出しレベルを1に固定
-        orderedList: false,
-        // スクロールオフセット
-        // scrollSmoothOffset: -70,
-        // 目次の深さを制限
-        collapseDepth: 3,
-      });
+	useEffect(() => {
+		if (!initialized.current) {
+			tocbot.init({
+				// 目次を表示するコンテナ
+				tocSelector,
+				// 目次の対象となるコンテンツ
+				contentSelector,
+				// 目次に含める見出し要素
+				headingSelector,
+				// 見出しの階層を示すためのHTML要素
+				hasInnerContainers: true,
+				// スクロール時のスムーズスクロール
+				scrollSmooth: true,
+				// 目次のリンククラス
+				linkClass: "toc-link",
+				// アクティブなリンククラス
+				activeLinkClass: "is-active-link",
+				// 目次のリストクラス
+				listClass: "toc-list",
+				// アクティブなリストアイテムクラス
+				activeListItemClass: "is-active-li",
+				// 階層を持つリストクラス
+				listItemClass: "toc-list-item",
+				// 最初の見出しレベルを1に固定
+				orderedList: false,
+				// スクロールオフセット
+				// scrollSmoothOffset: -70,
+				// 目次の深さを制限
+				collapseDepth: 3,
+			});
 
-      initialized.current = true;
-    }
+			initialized.current = true;
+		}
 
-    return () => {
-      if (initialized.current) {
-        tocbot.destroy();
-        initialized.current = false;
-      }
-    };
-  }, [contentSelector, headingSelector, tocSelector]);
+		return () => {
+			if (initialized.current) {
+				tocbot.destroy();
+				initialized.current = false;
+			}
+		};
+	}, [contentSelector, headingSelector, tocSelector]);
 
-  return (
-    <div className="toc-container sticky top-8">
-      <h3 className="text-lg font-semibold mb-3">目次</h3>
-      <div id="toc" className="toc"></div>
-      <style jsx global>{`
+	return (
+		<div className="toc-container sticky top-8">
+			<h3 className="text-lg font-semibold mb-3">目次</h3>
+			<div id="toc" className="toc" />
+			<style jsx global>{`
         .toc-list {
           @apply list-none pl-0 space-y-2;
         }
@@ -79,6 +79,6 @@ export default function Toc({
           @apply text-blue-600 font-medium;
         }
       `}</style>
-    </div>
-  );
+		</div>
+	);
 }
