@@ -1,0 +1,123 @@
+---
+title: 関数内のコンポーネントとレンダーの違い
+description: Reactにおける「コンポーネントとして呼び出す」と「関数として実行する」違いによるレンダリングの挙動について解説します。
+date: 2025-05-02
+tags:
+  - Next.js
+  - React
+---
+
+## レンダリングの違い
+
+Reactでは、「コンポーネントとして呼び出す」のと「関数として実行して要素を返す」場合とで、評価のされ方や再レンダリングの挙動が変わります。この記事では、その違いをコードとともに解説します。
+
+## コード例
+
+以下は、コンポーネントと関数による描画の違いを示すサンプルコードです。
+
+```tsx
+const InnerLog = memo(({ name }: { name: string }) => {
+  useEffect(() => {
+    console.log(`${name} rendered`);
+  }, []);
+  return <div>{name}</div>;
+});
+
+export default function Page() {
+  const [count, setCount] = useState(0);
+
+  const InnerComponent = useCallback(() => {
+    return <InnerLog name="InnerComponent" />;
+  }, [count]);
+
+  const innerRender = useCallback(() => {
+    return <InnerLog name="InnerRender" />;
+  }, [count]);
+
+  return (
+    <div>
+      <section>
+        {/* コンポーネントとして呼び出す */}
+        <InnerComponent />
+      </section>
+
+      <section style={{ marginTop: "2rem" }}>
+        {/* 関数を実行して呼び出す */}
+        {innerRender()}
+      </section>
+
+      <button onClick={() => setCount((c) => c + 1)}>
+        Increment
+      </button>
+    </div>
+  );
+}
+````
+
+ボタンを押して `count` を更新すると、`useCallback` により定義された `InnerComponent` および `innerRender` は再生成されます。
+しかし、挙動に差が出ます。
+
+* `<InnerComponent />` は新しいコンポーネントとして解釈されるため、再レンダリングと再マウントを行います。
+* `innerRender()` は要素を返す関数として解釈されるため、返された要素（`<InnerLog />`）の再評価は発生せず、メモ化された結果を再利用します。
+
+## なぜ再レンダリングの挙動が異なるのか？
+
+`InnerComponent` は、レンダリングごとに新しい関数として生成されます。Reactはこの変更を「異なるコンポーネント」と判断し、前回のコンポーネントをアンマウントして新しいものをマウントします。
+これが、意図しない再レンダリングを引き起こします。
+
+一方で、`innerRender()` はただの関数であり、呼び出された結果として返されるのはあくまでJSX要素（`<InnerLog />`）です。結果として、メモ化された`<InnerLog />`が返ります。
+
+## JSXでの評価の違い
+
+それぞれの記述が、JSXでどのように変換されるかを見てみましょう。
+
+### `<InnerComponent />` の場合
+
+```jsx
+<InnerComponent />
+```
+
+これは、以下のように解釈されます。
+
+```js
+React.createElement(InnerComponent, null)
+```
+
+ `InnerComponent` は関数ですが、Reactはこれを「関数コンポーネント」とみなして処理します。
+
+### `innerRender()` の場合
+
+```jsx
+{innerRender()}
+```
+
+この関数の返り値は`<InnerLog name="InnerRender" />`であるため、Reactは単にそれをレンダリングするだけです。
+以下のように評価されます。
+
+```js
+React.createElement(InnerLog, { name: "InnerRender" })
+```
+
+### レンダーとして扱う方が良さそう
+整理すると、`<InnerComponent />` のように関数コンポーネント内に定義された関数をJSXでコンポーネントのように記述するのは避けるべきです。
+Reactはそれを新しいコンポーネントと解釈し、意図しない再マウントの発生につながるためです。
+
+もしその関数がUIロジックの一部としてJSX要素を返すだけであれば、関数を実行して使う（render() のように呼び出す）形式にしましょう。
+
+```
+{innerRender()}
+```
+戻り値を単なる要素として扱い、メモ化や差分検出が正しく機能し、不要な再描画を回避できます。
+
+## まとめ
+
+コンポーネント内で関数を定義し、`<InnerComponent />` のようにコンポーネント形式で使用すると、「新しいコンポーネント」として扱い、毎回再マウントを引き起こします。
+意図しない副作用やパフォーマンスの低下につながる可能性があります。
+
+そのため、
+
+* 関数コンポーネント内で定義した関数を、JSX内で `<Component />` のように使うのは避ける。
+* UIロジックの一部として、ただJSX要素を返したいだけなら、関数として実行（例：`innerRender()`）する。
+
+このように使い分けることで、再レンダリング挙動をより正確に制御でき、不要な再マウントを防ぐことができます！
+
