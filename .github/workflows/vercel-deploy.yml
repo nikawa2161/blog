@@ -28,6 +28,9 @@ jobs:
       - name: Vercel CLIをインストール
         run: bun install --global vercel@latest
 
+      - name: Biomeのコードチェック
+        run: npx biome check .
+
       - name: Vercel環境情報を取得
         run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
 
