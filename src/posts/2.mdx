@@ -1,0 +1,124 @@
+---
+title: Tailwindクラスを柔軟にするライブラリ
+description: clsx × tailwind-merge × cva の使い方
+date: 2025-05-12
+tags:
+  - Tailwind
+---
+
+## はじめに
+clsx × tailwind-merge × cvaの使い方や役割がちゃんとわかっていなかったので学んだ内容を書きました。
+
+## clsx
+https://github.com/lukeed/clsx
+
+軽量かつ高速なユーティリティライブラリ<br/>
+クラス名を簡単に結合してくれる
+
+```tsx
+import { clsx } from 'clsx';
+
+clsx('foo', 'bar', 'baz');
+//　=> 'foo bar baz'　空白で出力
+
+clsx(true, false, '', null, undefined, 0, NaN);
+//　=> ''　falseyは除外
+
+clsx(['foo', 'bar']);
+//　=> 'foo bar' 配列やobjもOK
+```
+
+## tailwind-merge
+https://github.com/dcastil/tailwind-merge
+
+サイズは898kBでclsxの100倍だけど軽量の部類だと思う<br/>
+Tailwind のクラス競合を解決してくれる
+
+```tsx
+clsx('bg-red-500', 'bg-blue-500')
+//　=> 'bg-red-500 bg-blue-500'
+
+import { twMerge } from 'tailwind-merge'
+
+twMerge('bg-red-500 bg-blue-500')
+//　=> "bg-blue-500"
+
+
+twMerge(clsx( //　← clsxの併用でクラス名を結合
+  'px-4 py-2',
+  'bg-blue-500',
+  'bg-red-500' //　← 最後のものが優先されるよう自動解決
+))
+//　=> 'px-4 py-2 bg-gray-500'
+```
+
+## class-variance-authority
+https://github.com/joe-bell/cva
+
+Tailwind CSS のクラスを構造的かつ再利用可能な形で定義できる軽量ライブラリ
+Variants（バリエーション）の管理がしやすくなり、スタイルを一元化・拡張しやすくなる
+
+```tsx
+import { cva } from 'class-variance-authority'
+
+const button = cva('px-4 py-2', {
+  variants: {
+    intent: {
+      primary: 'bg-blue-500 ',
+      secondary: ['bg-gray-100'], ← 配列もOK
+    },
+    size: {
+      sm: 'text-sm',
+      md: 'text-base',
+    },
+  },
+  defaultVariants: {
+    intent: 'primary',
+    size: 'md',
+  },
+})
+
+button({ intent: 'secondary', size: 'sm' })
+//　=> 'px-4 py-2 bg-gray-100 text-sm'
+```
+
+## clsx × tailwind-merge × class-variance-authority
+3つを組み合わせると、柔軟で安全にクラスを構築できる
+- clsx: 条件によってクラスを結合
+- twMerge: クラスの競合を最適化
+- cva: 再利用可能なクラス定義 + variant管理
+
+```tsx
+//　1. cvaで定義
+const button = cva('px-4 py-2', {
+  variants: {
+    intent: {
+      primary: 'bg-blue-500',
+      secondary: 'bg-gray-100',
+    },
+    size: {
+      sm: 'text-sm',
+      md: 'text-base',
+    },
+  },
+  defaultVariants: {
+    intent: 'primary',
+    size: 'md',
+  },
+})
+
+//　2. 動的に組み合わせたクラスをtwMergeで最適化
+const className = twMerge(
+  clsx(
+    button({ intent: 'secondary', size: 'sm' }),
+    'bg-red-500', //　外から上書きしたい場合もOK
+  )
+)
+//　=> 'px-4 py-2 rounded text-sm bg-red-500'
+```
+
+## まとめ
+- cvaを使ってバリエーションを構造化
+- clsxとtwMergeでクラスを柔軟に制御
+
+それぞれのライブラリの使い方と役割が明確になりました🙋‍♂️
