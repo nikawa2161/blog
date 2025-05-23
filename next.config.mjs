@@ -3,6 +3,7 @@ import path from "node:path";
 import createMDX from "@next/mdx";
 import rehypePrettyCode from "rehype-pretty-code";
 import rehypeSlug from "rehype-slug";
+import remarkBreaks from "remark-breaks";
 import remarkFrontmatter from "remark-frontmatter";
 import remarkGfm from "remark-gfm";
 
@@ -20,7 +21,7 @@ const nextConfig = {
 
 const withMDX = await createMDX({
 	options: {
-		remarkPlugins: [remarkGfm, remarkFrontmatter],
+		remarkPlugins: [remarkGfm, remarkFrontmatter, remarkBreaks],
 		rehypePlugins: [
 			[
 				rehypePrettyCode,
