@@ -1,6 +1,7 @@
 import path from "node:path";
 // next.config.mjs
 import createMDX from "@next/mdx";
+import { remarkMermaid } from "@theguild/remark-mermaid";
 import rehypePrettyCode from "rehype-pretty-code";
 import rehypeSlug from "rehype-slug";
 import remarkBreaks from "remark-breaks";
@@ -21,7 +22,7 @@ const nextConfig = {
 
 const withMDX = await createMDX({
 	options: {
-		remarkPlugins: [remarkGfm, remarkFrontmatter, remarkBreaks],
+		remarkPlugins: [remarkGfm, remarkFrontmatter, remarkBreaks, remarkMermaid],
 		rehypePlugins: [
 			[
 				rehypePrettyCode,
