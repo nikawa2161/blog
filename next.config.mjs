@@ -11,11 +11,9 @@ import remarkGfm from "remark-gfm";
 /** @type {import('next').NextConfig} */
 const nextConfig = {
 	pageExtensions: ["md", "mdx", "ts", "tsx"],
-	experimental: {
-		turbo: {
-			resolveAlias: {
-				"@/posts": path.resolve("./src/posts"),
-			},
+	turbopack: {
+		resolveAlias: {
+			"@/posts": path.resolve("./src/posts"),
 		},
 	},
 };
