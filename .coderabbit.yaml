@@ -1,0 +1,84 @@
+# nikawa2161/blog (Next.js + TypeScript プロジェクト) 用の CodeRabbit 設定
+# この設定では関連するコードレビューツールを有効化し、フレンドリーなレビュートーンを設定します。
+# 各設定にはコメントで説明を記載しています。
+
+# YAML スキーマ参照（エディタサポート用）
+yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+
+# CodeRabbit のレビューを日本語で行うよう設定
+language: "ja-JP"
+
+# ベータ機能 / 早期アクセス: 最新機能を有効にする場合は true に設定（デフォルトは false）
+early_access: false
+
+# AI レビュアーのトーンとスタイルをカスタマイズ（親切でフレンドリー、かつ技術的に徹底的）
+tone_instructions: "常に親切でフレンドリーな口調でレビューを行ってください。技術的な指摘は丁寧かつ明確に伝え、改善につながる具体的なアドバイスを提供するよう心がけてください。"
+
+reviews:
+  # 寛容でフレンドリーなプロファイルを使用し、過度に細かい指摘を避ける
+  profile: "chill"
+  # PR を正式に変更要求でブロックせず、問題があってもコメントのみ残す
+  request_changes_workflow: false
+  # レビューコメントに変更の高レベルサマリーを含める
+  high_level_summary: true
+  # 楽しい詩の生成を無効化し、レビューを集中させる
+  poem: false
+  # 全体的なレビューステータスを提供（例：問題が残っていなければ自動承認）
+  review_status: true
+  # コメントで詳細な分析を完全表示（ウォークスルーを折りたたまない）
+  collapse_walkthrough: false
+
+  # プルリクエストで CodeRabbit を自動実行（準備完了まではドラフト PR をスキップ）
+  auto_review:
+    enabled: true
+    drafts: false
+    # base_branches で自動レビューを特定のターゲットブランチに制限可能（未設定 = 全ブランチ）
+    # base_branches: ["main"]
+
+  # このプロジェクトに関連する分析ツールを有効化し、不要なものは無効化
+  tools:
+    # Next.js/TypeScript 開発用のコアツールを有効化
+    eslint:
+      enabled: true   # JavaScript/TypeScript のコード品質とスタイル用リンター
+    biome:
+      enabled: true   # JS/TS のリンティングとフォーマット一貫性用の Biome (Rome)
+    markdownlint:
+      enabled: true   # README/MD ファイル用の Markdown リンター
+    languagetool:
+      enabled: true   # ドキュメント/コメント用の自然言語チェッカー（ja-JP サポート）
+    gitleaks:
+      enabled: true   # API キーや認証情報を検出するシークレットスキャナー
+
+    # このリポジトリで使用されていない言語/フレームワーク用ツールを無効化
+    rubocop:
+      enabled: false  # Ruby リンター（該当なし）
+    golangci-lint:
+      enabled: false  # Go リンター（該当なし）
+    swiftlint:
+      enabled: false  # Swift リンター（該当なし）
+    pmd:
+      enabled: false  # Java アナライザー（該当なし）
+    cppcheck:
+      enabled: false  # C/C++ アナライザー（該当なし）
+    detekt:
+      enabled: false  # Kotlin アナライザー（該当なし）
+    hadolint:
+      enabled: false  # Dockerfile リンター（不要）
+    buf:
+      enabled: false  # Protocol Buffers リンター（該当なし）
+    semgrep:
+      enabled: false  # 汎用静的解析（過度なノイズを避けるため無効化）
+    actionlint:
+      enabled: true   # GitHub Actions ワークフローリンター（ワークフローが存在する場合に備えて有効化）
+
+  # 特定のファイルパス/パターンに対するカスタムレビュー指示
+  path_instructions:
+    - path: "**/*.ts,**/*.tsx"
+      instructions: |
+        TypeScriptファイルでは、型の正確さや堅牢性、ベストプラクティスの遵守に重点を置いてレビューしてください。
+        例えば、可能な限り`any`型の使用を避け、明確で厳密な型定義やジェネリクスを適切に活用しているか確認します。
+        また、Next.jsの推奨パターン（Reactフックの正しい使用法やコンポーネント構成など）に従っているかもチェックし、必要に応じて改善点を提案してください。
+
+code_generation:
+  docstrings:
+    language: "ja-JP"   # JSDoc/TSDoc を日本語自動生成
