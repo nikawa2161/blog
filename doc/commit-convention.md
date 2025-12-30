@@ -6,10 +6,6 @@
 <type>: <subject>
 
 [本文]
-
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
-
-Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>
 ```
 
 ## Type（プレフィックス）
@@ -43,10 +39,6 @@ feat: GitHub ISSUE対応のPRコマンドを追加
 - ブランチ名からGitHub ISSUEを取得してPRを作成
 - Jira/MCP依存を削除し、gh CLIのみで完結
 - nikawa2161/blogリポジトリに対応
-
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
-
-Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>
 ```
 
 ```
