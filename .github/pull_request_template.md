@@ -1,6 +1,7 @@
 ## ISSUEのリンク
 
-* https://example.com
+<!-- ブランチ名の番号をISSUEリンクに記載してください -->
+* https://github.com/nikawa2161/blog/issues/
 
 ## やったこと
 
@@ -22,4 +23,7 @@
 
 * どのような動作確認を行ったのか？
 
-## その他 
+## その他
+
+<!-- マージ時にISSUEを自動でクローズするために、ブランチ名の番号を記載してください（例: Resolves #15） -->
+Resolves #
