@@ -25,9 +25,12 @@ bun run build
 bun run lint
 ```
 
-## コミットメッセージ規約
+## ドキュメント参照
 
-@doc/commit-convention.md
+- コミットメッセージ規約: @doc/commit-convention.md
+- treeコマンドの使い方: @doc/tree-command.md
+
+## コミットメッセージ規約
 
 コミットメッセージは以下の形式に従ってください：
 
