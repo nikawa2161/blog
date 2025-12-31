@@ -25,29 +25,10 @@ bun run build
 bun run lint
 ```
 
-## コミットメッセージ規約
+## ドキュメント参照
 
-@doc/commit-convention.md
-
-コミットメッセージは以下の形式に従ってください：
-
-```
-<type>: <subject>
-
-[本文]
-```
-
-**Type一覧:**
-- `feat`: 新機能
-- `fix`: バグ修正
-- `docs`: ドキュメント変更
-- `style`: コードフォーマット
-- `refactor`: リファクタリング
-- `perf`: パフォーマンス改善
-- `test`: テスト追加・修正
-- `chore`: ビルド・ツール変更
-
-詳細は `doc/commit-convention.md` を参照してください。
+- コミットメッセージ規約: @doc/commit-convention.md
+- treeコマンドとREADME.md更新: @doc/tree-command.md（構造変更時にtreeコマンドを実行してREADME.mdを更新）
 
 ## PR作成
 
