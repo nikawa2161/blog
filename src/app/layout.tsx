@@ -32,9 +32,10 @@ export default function RootLayout({
 			<body className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen`}>
 				<header className="bg-gray-800 text-white p-4">
 					<div className="container mx-auto flex justify-between items-center">
-						<div className="text-xl font-bold">
-							<Link href="/">{SiteConfig.name}</Link>
-						</div>
+						<Link href="/" className="flex items-center gap-2 text-xl font-bold">
+							<Image src="/logo/logo.png" alt="Logo" width={32} height={32} />
+							{SiteConfig.name}
+						</Link>
 						<Link href={SiteConfig.url} target="_blank" rel="noopener noreferrer">
 							<GitHubIcon />
 						</Link>
