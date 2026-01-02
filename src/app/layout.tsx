@@ -16,8 +16,22 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+	metadataBase: new URL(SiteConfig.siteUrl),
 	title: SiteConfig.name,
 	description: SiteConfig.description,
+	openGraph: {
+		title: SiteConfig.name,
+		description: SiteConfig.description,
+		url: SiteConfig.siteUrl,
+		siteName: SiteConfig.name,
+		locale: "ja_JP",
+		type: "website",
+	},
+	twitter: {
+		card: "summary_large_image",
+		title: SiteConfig.name,
+		description: SiteConfig.description,
+	},
 };
 
 const GitHubIcon = () => <Image src="/github-mark-white.svg" alt="GitHub icon" width={32} height={32} />;
