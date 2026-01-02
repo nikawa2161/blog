@@ -33,7 +33,7 @@ export default function RootLayout({
 				<header className="bg-gray-800 text-white p-4">
 					<div className="container mx-auto flex justify-between items-center">
 						<Link href="/" className="flex items-center gap-2 text-xl font-bold">
-							<Image src="/logo/logo.png" alt="Logo" width={32} height={32} />
+							<Image src="/logo/logo.webp" alt="Logo" width={32} height={32} />
 							{SiteConfig.name}
 						</Link>
 						<Link href={SiteConfig.url} target="_blank" rel="noopener noreferrer">
