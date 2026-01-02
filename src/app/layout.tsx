@@ -36,9 +36,14 @@ export default function RootLayout({
 							<Image src="/logo/logo.webp" alt="Logo" width={32} height={32} />
 							{SiteConfig.name}
 						</Link>
-						<Link href={SiteConfig.url} target="_blank" rel="noopener noreferrer">
-							<GitHubIcon />
-						</Link>
+						<nav className="flex items-center gap-6">
+							<Link href="/about" className="hover:text-gray-300 transition-colors">
+								About
+							</Link>
+							<Link href={SiteConfig.url} target="_blank" rel="noopener noreferrer">
+								<GitHubIcon />
+							</Link>
+						</nav>
 					</div>
 				</header>
 				<main className="container mx-auto p-4 flex-grow">{children}</main>
