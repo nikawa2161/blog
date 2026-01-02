@@ -27,7 +27,7 @@ bun run lint
 
 ## プロジェクト構造
 
-```
+```text
 .
 ├── biome.json
 ├── bun.lock
