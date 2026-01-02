@@ -25,6 +25,41 @@ bun run build
 bun run lint
 ```
 
+## プロジェクト構造
+
+```text
+.
+├── biome.json
+├── bun.lock
+├── CLAUDE.md
+├── components.json
+├── doc
+│   ├── commit-convention.md
+│   ├── github_tool_examples.md
+│   └── tree-command.md
+├── lefthook.yml
+├── next-env.d.ts
+├── next.config.mjs
+├── package.json
+├── postcss.config.mjs
+├── public
+│   ├── github-mark-white.svg
+│   ├── logo
+│   └── resume.pdf
+├── README.md
+├── src
+│   ├── app
+│   ├── components
+│   ├── constants
+│   ├── lib
+│   ├── mdx-components.tsx
+│   ├── posts
+│   └── utils
+└── tsconfig.json
+```
+
+> **Note**: 構造変更時は[treeコマンドの使い方](doc/tree-command.md)を参照してこのセクションを更新してください。
+
 ## ドキュメント
 
 開発に関する詳細なドキュメントは `doc/` ディレクトリを参照してください：
@@ -35,3 +70,4 @@ bun run lint
 ## Claude Code
 
 Claude Codeを使用する際は `CLAUDE.md` を参照してください。
+
