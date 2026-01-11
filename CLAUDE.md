@@ -30,10 +30,11 @@ bun run lint
 - コミットメッセージ規約: @doc/commit-convention.md
 - treeコマンドとREADME.md更新: @doc/tree-command.md（構造変更時にtreeコマンドを実行してREADME.mdを更新）
 
-## PR作成
+## GitHub操作
 
-`.claude/commands/pr.md` のコマンドを使用してPRを作成できます。
-ブランチ名から自動的にGitHub ISSUEを取得し、PRを作成します。
+- **ISSUE作成**: `gh issue create` コマンドを使用
+- **PR作成**: `.claude/commands/pr.md` のコマンドを使用
+  - ブランチ名から自動的にGitHub ISSUEを取得し、PRを作成します
 
 ## 注意事項
 
