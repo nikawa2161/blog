@@ -1,0 +1,411 @@
+---
+title: Sagaパターン入門
+description: 分散システムにおけるトランザクション管理パターンと、ACID特性との比較や実装方式、注意点など。
+date: 2026-01-11
+tags:
+  - アーキテクチャ
+  - マイクロサービス
+  - 分散システム
+---
+
+## はじめに
+
+分散システムやマイクロサービスアーキテクチャでは、複数のサービスにまたがるトランザクション管理が課題です。
+従来の単一DBでは実現できていたACID特性が、分散環境では維持が難しくなります。
+その解決策の1つであるSagaパターンについて、基本から実装方式、注意点まで解説します。
+
+## ACID特性とは
+
+まず、従来のDBが持つACID特性について確認しましょう。DBはこの4つの特性を持っています。
+
+```mermaid
+%%{init: {
+  "theme": "base",
+  "themeVariables": {
+    "primaryColor": "#E3F2FD",
+    "primaryTextColor": "#0B1F3A",
+    "primaryBorderColor": "#90CAF9",
+    "lineColor": "#607D8B",
+  }
+}}%%
+flowchart TB
+  ACID["ACID特性"]
+
+  A["Atomicity（原子性）<br/>成功するか、失敗か"]
+  C["Consistency（一貫性）<br/>データの整合性が維持"]
+  I["Isolation（分離性）<br/>互いに影響を与えない"]
+  D["Durability（耐久性）<br/>結果が永続的に保存される"]
+
+  ACID --> A
+  ACID --> C
+  ACID --> I
+  ACID --> D
+
+  %% 色分け
+  style ACID fill:#1E3A8A,stroke:#0B1F3A,stroke-width:2px,color:#FFFFFF
+
+  style A fill:#FDE68A,stroke:#B45309,stroke-width:2px,color:#1F2937
+  style C fill:#BBF7D0,stroke:#15803D,stroke-width:2px,color:#1F2937
+  style I fill:#BFDBFE,stroke:#1D4ED8,stroke-width:2px,color:#1F2937
+  style D fill:#FBCFE8,stroke:#BE185D,stroke-width:2px,color:#1F2937
+
+```
+
+単一DBなら、複数のアクション（処理）が同一DB内なので、エラーが発生してもロールバックしやすい特徴があります。
+
+## 分散システムにおける課題
+
+一方、分散システムでは複数のサービスにまたがるため、DBが分かれています。
+
+例えば、ゴーヤーチャンプルを注文するマイクロサービスを考えてみましょう。
+
+```mermaid
+%%{init: {
+  "theme": "base",
+  "themeVariables": {
+    "actorBkg": "#EEF2FF",
+    "actorBorder": "#C7D2FE",
+    "actorTextColor": "#111827",
+    "signalColor": "#374151",
+    "signalTextColor": "#111827",
+    "lineColor": "#9CA3AF",
+    "noteBkgColor": "#FEF3C7",
+    "noteTextColor": "#111827",
+    "noteBorderColor": "#F59E0B",
+    "fontFamily": "Noto Sans JP, Helvetica, Arial, sans-serif"
+  }
+}}%%
+sequenceDiagram
+  participant U as ユーザー
+  participant OMS as 注文管理サービス
+  participant IMS as 在庫管理サービス
+  participant PAY as 決済サービス
+  participant SHIP as 配送サービス
+  participant MAIL as メール送信サービス
+
+  U->>OMS: ゴーヤーチャンプル注文
+  OMS->>IMS: 食材確保（ゴーヤー/豆腐/卵）
+  OMS->>PAY: お会計（支払い）
+  OMS->>SHIP: 調理指示（ゴーヤー切る→炒める→味付け→盛り付け）
+  OMS->>MAIL: 完成通知を送信
+  OMS-->>U: 提供完了（受け取りOK）
+
+```
+
+このような複数のサービスにまたがる処理で、Sagaパターンが有用になります。
+
+## Sagaパターンとは
+
+Sagaパターンは、分散システムにおいて使われる手法です。以下のような特徴があります。
+
+- トランザクションをステップごとに分けて、独立した操作を行う
+- もし失敗したら、取り消し操作を行う（**補償トランザクション**）
+  - 逆向きに実行して初期化するイメージ
+- 手動で設計する必要があるため、しっかりとした設計が求められる
+
+## Sagaの2つの実装方式
+
+Sagaパターンには2つの実装方法があります。
+
+```mermaid
+%%{init: {"theme":"neutral"}}%%
+flowchart LR
+  SAGA["Saga パターン"]
+  C["コレオグラフィー<br/>各サービス自律"]
+  O["オーケストレーション<br/>中央コーディネータが制御"]
+
+  SAGA --> C
+  SAGA --> O
+
+```
+
+### コレオグラフィー方式
+
+コレオグラフィー方式では、各サービスが自律的に動作します。
+
+- 各サービスが自分の役割を理解していて、イベントに基づいて次のアクションを決める方式
+- イベント駆動的なアプローチ
+- 柔軟性が高いですが、全体の流れを把握しにくい特徴があります
+
+この方式では、中央の司令塔はいません。各サービスは以下のように動作します。
+
+- イベントを**publish**（発行）
+- 必要なイベントを**subscribe**（購読）
+
+```mermaid
+flowchart LR
+  A[サービスA] -->|イベント publish| MB[メッセージブローカ]
+  MB -->|イベント subscribe| B[サービスB]
+  MB -->|イベント subscribe| C[サービスC]
+  MB -->|イベント subscribe| D[サービスD]
+
+  style A fill:#EEF2FF,stroke:#C7D2FE
+  style B fill:#E0F2FE,stroke:#7DD3FC
+  style C fill:#E0F2FE,stroke:#7DD3FC
+  style D fill:#E0F2FE,stroke:#7DD3FC
+  style MB fill:#FEF3C7,stroke:#F59E0B
+
+```
+
+サービスAはサービスB/C/Dを知らず、誰が処理するかはメッセージブローカに任せます。
+
+Sagaで実装すると、以下のような構成になります。
+
+```mermaid
+flowchart LR
+  OS[注文作成Saga] -->|OrderCreated| MB[メッセージブローカ]
+  CS[注文キャンセルSaga] -->|OrderCancelled| MB
+
+  MB -->|OrderCreated| OMS[注文管理サービス]
+  MB -->|OrderCreated / OrderCancelled| CMS[信用管理サービス]
+  MB -->|OrderCreated| IMS[在庫管理サービス]
+
+  style OS fill:#EEF2FF,stroke:#C7D2FE
+  style CS fill:#EEF2FF,stroke:#C7D2FE
+  style OMS fill:#E0F2FE,stroke:#7DD3FC
+  style CMS fill:#E0F2FE,stroke:#7DD3FC
+  style IMS fill:#E0F2FE,stroke:#7DD3FC
+  style MB fill:#FEF3C7,stroke:#F59E0B
+
+```
+
+- 各サービスが**イベントを発行する役割**を持ちます
+- 各サービスは他のSagaを知りません
+- 他のサービスも知りません
+- ただ**イベントに反応するだけ**です
+
+注文作成を具体的に見てみましょう。
+
+```mermaid
+sequenceDiagram
+  participant OS as 注文作成Saga
+  participant MB as メッセージブローカ
+  participant CMS as 信用管理サービス
+  participant IMS as 在庫管理サービス
+
+  OS->>MB: OrderCreated publish
+  MB->>CMS: OrderCreated
+  MB->>IMS: OrderCreated
+
+  CMS->>CMS: 信用限度額を減算
+  IMS->>IMS: 在庫を引当
+
+```
+
+### オーケストレーション方式
+
+オーケストレーション方式では、中央のコーディネーターが全体の流れを制御します。
+
+- 中央で、次はこれをやってと指示する方式
+- 中央集権的なアプローチ
+- 全体を把握しやすいですが、単一障害点になりやすい特徴があります
+
+オーケストレータ（指揮者）が処理の順番を決めます。
+
+```mermaid
+flowchart LR
+  ORC[オーケストレータ] --> S1[サービスA]
+  ORC --> S2[サービスB]
+  ORC --> S3[サービスC]
+
+  style ORC fill:#FEF3C7,stroke:#F59E0B
+  style S1 fill:#E0F2FE,stroke:#7DD3FC
+  style S2 fill:#E0F2FE,stroke:#7DD3FC
+  style S3 fill:#E0F2FE,stroke:#7DD3FC
+
+```
+
+呼び出し元は常にオーケストレータで、サービス同士はつながりません。処理の順序は明示的で全体がわかりやすくなっています。
+
+Sagaで実装すると、以下のような構成になります。
+
+```mermaid
+flowchart LR
+  OS[注文Saga<br/>（オーケストレータ）]
+  OMS[注文管理サービス]
+  CMS[信用管理サービス]
+  IMS[在庫管理サービス]
+
+  OS --> OMS
+  OS --> CMS
+  OS --> IMS
+
+  style OS fill:#FEF3C7,stroke:#F59E0B
+  style OMS fill:#E0F2FE,stroke:#7DD3FC
+  style CMS fill:#E0F2FE,stroke:#7DD3FC
+  style IMS fill:#E0F2FE,stroke:#7DD3FC
+
+```
+
+- 注文Sagaが**全体の進行役**を務めます
+- 各サービスは
+  - Sagaから呼ばれていることは知っていますが、Sagaの詳細は知りません
+  - 他のサービスは知りません
+
+より具体的な流れを見てみましょう。
+
+```mermaid
+sequenceDiagram
+  participant OS as 注文Saga（オーケストレータ）
+  participant OMS as 注文管理サービス
+  participant CMS as 信用管理サービス
+  participant IMS as 在庫管理サービス
+
+  OS->>OMS: 注文作成
+  OMS-->>OS: OK
+
+  OS->>CMS: 信用限度額確認・減算
+  CMS-->>OS: OK
+
+  OS->>IMS: 在庫引当
+  IMS-->>OS: OK
+
+  OS->>OMS: 注文確定
+
+```
+
+オーケストレーション方式では、処理を並行で行うことができますが、同期的になりやすい傾向があります。一方で、状態遷移が一つに集約されるため、管理がしやすくなります。
+
+## 分散システム特有の問題点
+
+ここで、ACID特性のうち、Isolation（分離性）の欠如によって生じる問題を説明します。
+
+### Lost Update問題
+
+**せっかく書き込んだ値が他のトランザクションによってなかった事にされる**問題です。
+
+```mermaid
+%%{init: {
+  "theme": "base",
+  "themeVariables": {
+    "actorBkg": "#EEF2FF",
+    "actorBorder": "#C7D2FE",
+    "actorTextColor": "#111827",
+
+    "signalColor": "#374151",
+    "signalTextColor": "#111827",
+    "lineColor": "#9CA3AF",
+
+    "noteBkgColor": "#FEF3C7",
+    "noteBorderColor": "#F59E0B",
+    "noteTextColor": "#111827",
+
+    "fontFamily": "Noto Sans JP, Helvetica, Arial, sans-serif"
+  }
+}}%%
+sequenceDiagram
+  participant OS as ゴーヤー注文Saga
+  participant CS as ゴーヤーキャンセルSaga
+  participant OMS as 注文管理サービス
+
+    OS->>OMS: ゴーヤー注文作成（次、注文確定へ）
+    CS->>OMS: ゴーヤー注文キャンセル
+      OS->>OMS: ゴーヤー注文確定
+
+  %% 問題点の強調ノート
+  Note over OMS: キャンセル済みのはずの注文が<br/>注文Sagaにより上書きされ<br/>確定状態になってしまう
+
+```
+
+### Dirty Read問題
+
+コミット・ロールバック前の変更内容が他の人にも見える問題です。
+
+```mermaid
+%%{init: {
+  "theme": "base",
+  "themeVariables": {
+    "actorBkg": "#EEF2FF",
+    "actorBorder": "#C7D2FE",
+    "actorTextColor": "#111827",
+
+    "signalColor": "#374151",
+    "signalTextColor": "#111827",
+    "lineColor": "#9CA3AF",
+
+    "noteBkgColor": "#FEF3C7",
+    "noteBorderColor": "#F59E0B",
+    "noteTextColor": "#111827",
+
+    "fontFamily": "Noto Sans JP, Helvetica, Arial, sans-serif"
+  }
+}}%%
+sequenceDiagram
+  participant CS as 注文キャンセルSaga
+  participant OS as 注文作成Saga
+  participant CMS as 信用管理サービス
+
+  %% キャンセルSaga開始
+  Note over CS: 信用限度額を調整
+
+  CS->>CMS: 信用限度額を増加
+
+  %% 並行して新規注文が始まる
+  Note over OS: ここでゴーヤーを注文!!
+
+  OS->>CMS: 信用限度額の確認・減算
+
+  %% キャンセルSaga失敗
+  Note over CS: キャンセルSaga失敗
+
+  CS->>CMS: 信用限度額を減算（補償処理）
+
+  %% 問題の結果
+  Note over CMS: 一時的に増加した信用限度額を<br/>新規注文Sagaが参照してしまい<br/>限度額超過の注文が承認される
+
+```
+
+## 従来のトランザクションとSagaの比較
+
+### ACID特性との対比
+
+Sagaパターンでは、ACID特性の各要素を以下のように実現します。
+
+- **Atomicity（原子性）**
+  - 成功するか、補償トランザクションによる初期化か、のどちらかになります
+- **Consistency（一貫性）**
+  - 一連の各ローカルトランザクションで保証されます
+- **Durability（耐久性）**
+  - ローカルトランザクションのコミットで保証されます
+- **Isolation（分離性）**
+  - 一連の処理が実行中に、途中の状態が参照できる状態になります
+  - 例えば、ゴーヤーの注文は完了しているが、決済がまだの状態で、ユーザーがその状態の在庫を閲覧できてしまうなど
+
+従来のトランザクションとSagaの違いを表にまとめると、以下のようになります。
+
+| 観点 | 従来（ACIDトランザクション） | Saga（分散・マイクロサービス） |
+| --- | --- | --- |
+| Isolation（分離性） | DBが担保 | **担保しにくい**（途中状態が見える） |
+| 失敗時の扱い | rollback（自動・一括） | **補償トランザクション**を設計・実装する |
+| 状態の可視性 | 基本「確定した結果」中心 | **途中経過（中間状態）が見えうる** |
+| 整合性 | 強整合（ACID） | 最終的整合（最終的に一致する、ACD） |
+| 実行方式 | 同期・逐次が多い | 非同期化でスループット向上が狙える |
+| 複雑性 | 単一DBでシンプル | **分離するほど複雑性が増える** |
+
+### 2つの実装方式の比較
+
+コレオグラフィーとオーケストレーションの違いを表にまとめると、以下のようになります。
+
+| 観点 | Choreography（コレオグラフィー） | Orchestration（オーケストレーション） |
+| --- | --- | --- |
+| 制御の中心 | **中央なし**（イベント連鎖で進む） | **中央あり**（オーケストレータが指示） |
+| 連携手段 | publish/subscribe（イベント駆動） | 直接呼び出し（順序制御） |
+| 全体フローの見通し | 把握しにくい（暗黙の連鎖） | 把握しやすい（明示的手順） |
+| 柔軟性/拡張性 | 高い（サービス追加が容易） | 中央変更が必要になりやすい |
+| 競合・整合性リスク | **高め**（並行Sagaや一時状態参照の罠） | **低め**（中央が順序と状態を集約） |
+| 障害特性 | ブローカ/イベント設計が必要 | オーケストレータが単一障害点になりうる |
+| 実装の難所 | 状態・競合・冪等・順序を分散で成立させる | オーケストレータ肥大化、スケール、変更影響範囲 |
+| 向いている状況 | 大規模組織・疎結合重視・イベント基盤が強い | 一貫性重視・フローが明確・統制が必要 |
+
+## まとめ
+
+分散システムやマイクロサービスアーキテクチャでは、従来の単一DBでは実現できていたACID特性の維持が難しくなります。特にIsolation（分離性）の欠如は、Lost UpdateやDirty Readといった問題を引き起こします。
+
+Sagaパターンは、この課題を解決するための有効な手法です。トランザクションをステップごとに分割し、失敗時には補償トランザクションで元に戻すことで、分散環境でもトランザクションの一貫性を保つことができます。
+
+実装方式には、コレオグラフィーとオーケストレーションの2つがあります。
+
+- **コレオグラフィー**は、柔軟性が高く、サービスの追加が容易ですが、全体の流れが把握しにくく、競合・整合性リスクが高めです。大規模組織やイベント基盤が強い環境に向いています。
+- **オーケストレーション**は、全体の流れが把握しやすく、競合・整合性リスクが低めですが、オーケストレータが単一障害点になりやすい特徴があります。一貫性を重視し、フローが明確な環境に向いています。
+
+どちらの方式を選ぶにせよ、補償トランザクションの設計が鍵となります。分散システムを構築する際は、これらの特性を理解し、適切な設計を行うことが重要です！
