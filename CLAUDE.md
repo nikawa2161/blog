@@ -32,9 +32,30 @@ bun run lint
 
 ## GitHub操作
 
-- **ISSUE作成**: `gh issue create` コマンドを使用
-- **PR作成**: `.claude/commands/pr.md` のコマンドを使用
-  - ブランチ名から自動的にGitHub ISSUEを取得し、PRを作成します
+**重要**: このプロジェクトでは、**すべてのGitHub操作にgh CLIを使用**します。MCPツール（`mcp__github__*`）は使用しないでください。
+
+### 判断フロー
+
+GitHub操作が必要な場合、以下の順序で判断してください:
+
+1. ✅ このドキュメント（CLAUDE.md）の指示を確認
+2. ❌ MCPツールは使用禁止（権限エラーのため）
+
+### 基本操作
+
+- **ISSUE作成**: `gh issue create`
+- **ISSUE閲覧**: `gh issue view <番号>`
+- **ISSUEコメント**: `gh issue comment <番号>`
+- **PR作成**: `.claude/commands/pr.md` のコマンド（ブランチ名からGitHub ISSUEを自動取得）
+- **PR閲覧**: `gh pr view <番号>`
+- **PRコメント**: `gh pr comment <番号>`
+- **リポジトリ情報**: `gh repo view`
+
+### 優先順位ルール
+
+```
+優先度: プロジェクト指示 > gh CLI > MCPツール（使用禁止）
+```
 
 ## 注意事項
 
