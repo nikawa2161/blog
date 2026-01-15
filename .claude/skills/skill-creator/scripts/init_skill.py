@@ -276,7 +276,7 @@ def main():
         print("\nスキル名の要件:")
         print("  - ハイフンケース識別子（例: 'data-analyzer'）")
         print("  - 小文字、数字、ハイフンのみ")
-        print("  - 最大40文字")
+        print("  - 最大64文字")
         print("  - ディレクトリ名と正確に一致する必要があります")
         print("\n例:")
         print("  init_skill.py my-new-skill --path skills/public")
