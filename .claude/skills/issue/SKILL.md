@@ -27,7 +27,7 @@ GitHub ISSUEを作成してください。
 テンプレートから本文部分（YAMLフロントマターを除いた部分）を抽出し、ユーザーから収集した内容で埋めてISSUEを作成:
 
 ```bash
-gh issue create --title "タイトル" --label "feature" --body "$(cat <<'EOF'
+gh issue create --title "タイトル" --label "[テンプレートのYAMLフロントマターから取得]" --body "$(cat <<'EOF'
 [テンプレートの本文をここに展開し、ユーザーの回答で埋める]
 EOF
 )"
