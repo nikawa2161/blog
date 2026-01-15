@@ -1,6 +1,7 @@
 ---
-description: 現在のブランチ名からGithub ISSUEの情報を取得し、PRを作成します。
-allowed-tools: Bash(git:*), Bash(gh:*)
+name: pr
+description: 現在のブランチ名からGitHub ISSUEの情報を取得し、PRを作成します。コミット完了後に自動的に提案します。
+allowed-tools: Read, Bash(git:*), Bash(gh:*)
 model: haiku
 ---
 
@@ -29,7 +30,9 @@ model: haiku
 
 ### 4. PRテンプレートの準備
 
-`.github/PULL_REQUEST_TEMPLATE.md` が存在する場合は読み込み、以下の内容で埋める:
+`.github/PULL_REQUEST_TEMPLATE.md` を読み込んで、テンプレートの形式を確認してください。
+
+以下の内容でテンプレートを埋める:
 
 - **ISSUEへのリンク**: GitHub ISSUE URL
 - **やったこと**: `git log main..HEAD --format="%B"` から取得したコミットメッセージ（絵文字を除いた説明部分）を箇条書き
@@ -46,6 +49,8 @@ Closes #{ISSUE番号}
 ## 確認手順
 - [推奨される確認手順]
 ```
+
+**重要**: テンプレートファイルが更新された場合は、常に最新の内容を参照すること
 
 ### 5. PRの作成
 
@@ -78,3 +83,4 @@ EOF
 - コミットメッセージは絵文字を除いた部分のみを使用
 - `git log main..HEAD --format="%B"` で全コミットメッセージ（詳細含む）を取得
 - `gh pr create` のHEREDOCでは `'EOF'` とシングルクォートで囲む
+- **必ず** `.github/PULL_REQUEST_TEMPLATE.md` を読み込んでテンプレート形式を確認すること
