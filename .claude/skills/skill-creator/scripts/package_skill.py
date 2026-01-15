@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """
-Skill Packager - Creates a distributable .skill file of a skill folder
+スキルパッケージャー - スキルフォルダの配布可能な.skillファイルを作成します
 
-Usage:
+使用方法:
     python utils/package_skill.py <path/to/skill-folder> [output-directory]
 
-Example:
+例:
     python utils/package_skill.py skills/public/my-skill
     python utils/package_skill.py skills/public/my-skill ./dist
 """
@@ -18,42 +18,42 @@ from quick_validate import validate_skill
 
 def package_skill(skill_path, output_dir=None):
     """
-    Package a skill folder into a .skill file.
+    スキルフォルダを.skillファイルにパッケージ化します。
 
     Args:
-        skill_path: Path to the skill folder
-        output_dir: Optional output directory for the .skill file (defaults to current directory)
+        skill_path: スキルフォルダへのパス
+        output_dir: .skillファイルのオプションの出力ディレクトリ（デフォルトは現在のディレクトリ）
 
     Returns:
-        Path to the created .skill file, or None if error
+        作成された.skillファイルへのパス、またはエラーの場合はNone
     """
     skill_path = Path(skill_path).resolve()
 
-    # Validate skill folder exists
+    # スキルフォルダが存在するか検証
     if not skill_path.exists():
-        print(f"❌ Error: Skill folder not found: {skill_path}")
+        print(f"❌ エラー: スキルフォルダが見つかりません: {skill_path}")
         return None
 
     if not skill_path.is_dir():
-        print(f"❌ Error: Path is not a directory: {skill_path}")
+        print(f"❌ エラー: パスがディレクトリではありません: {skill_path}")
         return None
 
-    # Validate SKILL.md exists
+    # SKILL.mdが存在するか検証
     skill_md = skill_path / "SKILL.md"
     if not skill_md.exists():
-        print(f"❌ Error: SKILL.md not found in {skill_path}")
+        print(f"❌ エラー: SKILL.mdが{skill_path}に見つかりません")
         return None
 
-    # Run validation before packaging
-    print("🔍 Validating skill...")
+    # パッケージング前にバリデーションを実行
+    print("🔍 スキルを検証中...")
     valid, message = validate_skill(skill_path)
     if not valid:
-        print(f"❌ Validation failed: {message}")
-        print("   Please fix the validation errors before packaging.")
+        print(f"❌ バリデーション失敗: {message}")
+        print("   パッケージング前にバリデーションエラーを修正してください。")
         return None
     print(f"✅ {message}\n")
 
-    # Determine output location
+    # 出力場所を決定
     skill_name = skill_path.name
     if output_dir:
         output_path = Path(output_dir).resolve()
@@ -63,29 +63,29 @@ def package_skill(skill_path, output_dir=None):
 
     skill_filename = output_path / f"{skill_name}.skill"
 
-    # Create the .skill file (zip format)
+    # .skillファイルを作成（zip形式）
     try:
         with zipfile.ZipFile(skill_filename, 'w', zipfile.ZIP_DEFLATED) as zipf:
-            # Walk through the skill directory
+            # スキルディレクトリをウォークスルー
             for file_path in skill_path.rglob('*'):
                 if file_path.is_file():
-                    # Calculate the relative path within the zip
+                    # zip内の相対パスを計算
                     arcname = file_path.relative_to(skill_path.parent)
                     zipf.write(file_path, arcname)
-                    print(f"  Added: {arcname}")
+                    print(f"  追加: {arcname}")
 
-        print(f"\n✅ Successfully packaged skill to: {skill_filename}")
+        print(f"\n✅ スキルを正常にパッケージ化しました: {skill_filename}")
         return skill_filename
 
     except Exception as e:
-        print(f"❌ Error creating .skill file: {e}")
+        print(f"❌ .skillファイル作成エラー: {e}")
         return None
 
 
 def main():
     if len(sys.argv) < 2:
-        print("Usage: python utils/package_skill.py <path/to/skill-folder> [output-directory]")
-        print("\nExample:")
+        print("使用方法: python utils/package_skill.py <path/to/skill-folder> [output-directory]")
+        print("\n例:")
         print("  python utils/package_skill.py skills/public/my-skill")
         print("  python utils/package_skill.py skills/public/my-skill ./dist")
         sys.exit(1)
@@ -93,9 +93,9 @@ def main():
     skill_path = sys.argv[1]
     output_dir = sys.argv[2] if len(sys.argv) > 2 else None
 
-    print(f"📦 Packaging skill: {skill_path}")
+    print(f"📦 スキルをパッケージング中: {skill_path}")
     if output_dir:
-        print(f"   Output directory: {output_dir}")
+        print(f"   出力ディレクトリ: {output_dir}")
     print()
 
     result = package_skill(skill_path, output_dir)

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Quick validation script for skills - minimal version
+スキルのクイックバリデーションスクリプト - 最小バージョン
 """
 
 import sys
@@ -10,86 +10,86 @@ import yaml
 from pathlib import Path
 
 def validate_skill(skill_path):
-    """Basic validation of a skill"""
+    """スキルの基本的なバリデーション"""
     skill_path = Path(skill_path)
 
-    # Check SKILL.md exists
+    # SKILL.mdが存在するか確認
     skill_md = skill_path / 'SKILL.md'
     if not skill_md.exists():
-        return False, "SKILL.md not found"
+        return False, "SKILL.mdが見つかりません"
 
-    # Read and validate frontmatter
+    # frontmatterを読み取り、検証
     content = skill_md.read_text()
     if not content.startswith('---'):
-        return False, "No YAML frontmatter found"
+        return False, "YAMLフロントマターが見つかりません"
 
-    # Extract frontmatter
+    # frontmatterを抽出
     match = re.match(r'^---\n(.*?)\n---', content, re.DOTALL)
     if not match:
-        return False, "Invalid frontmatter format"
+        return False, "フロントマター形式が無効です"
 
     frontmatter_text = match.group(1)
 
-    # Parse YAML frontmatter
+    # YAMLフロントマターをパース
     try:
         frontmatter = yaml.safe_load(frontmatter_text)
         if not isinstance(frontmatter, dict):
-            return False, "Frontmatter must be a YAML dictionary"
+            return False, "フロントマターはYAML辞書でなければなりません"
     except yaml.YAMLError as e:
-        return False, f"Invalid YAML in frontmatter: {e}"
+        return False, f"フロントマター内のYAMLが無効です: {e}"
 
-    # Define allowed properties
+    # 許可されたプロパティを定義
     ALLOWED_PROPERTIES = {'name', 'description', 'allowed-tools', 'metadata'}
 
-    # Check for unexpected properties (excluding nested keys under metadata)
+    # 予期しないプロパティをチェック（metadata配下のネストされたキーは除外）
     unexpected_keys = set(frontmatter.keys()) - ALLOWED_PROPERTIES
     if unexpected_keys:
         return False, (
-            f"Unexpected key(s) in SKILL.md frontmatter: {', '.join(sorted(unexpected_keys))}. "
-            f"Allowed properties are: {', '.join(sorted(ALLOWED_PROPERTIES))}"
+            f"SKILL.mdフロントマター内に予期しないキー: {', '.join(sorted(unexpected_keys))}。"
+            f"許可されているプロパティ: {', '.join(sorted(ALLOWED_PROPERTIES))}"
         )
 
-    # Check required fields
+    # 必須フィールドをチェック
     if 'name' not in frontmatter:
-        return False, "Missing 'name' in frontmatter"
+        return False, "フロントマターに'name'がありません"
     if 'description' not in frontmatter:
-        return False, "Missing 'description' in frontmatter"
+        return False, "フロントマターに'description'がありません"
 
-    # Extract name for validation
+    # nameを抽出して検証
     name = frontmatter.get('name', '')
     if not isinstance(name, str):
-        return False, f"Name must be a string, got {type(name).__name__}"
+        return False, f"nameは文字列でなければなりません（{type(name).__name__}が指定されています）"
     name = name.strip()
     if name:
-        # Check naming convention (hyphen-case: lowercase with hyphens)
+        # 命名規則をチェック（ハイフンケース：小文字とハイフン）
         if not re.match(r'^[a-z0-9-]+$', name):
-            return False, f"Name '{name}' should be hyphen-case (lowercase letters, digits, and hyphens only)"
+            return False, f"name '{name}'はハイフンケース（小文字、数字、ハイフンのみ）である必要があります"
         if name.startswith('-') or name.endswith('-') or '--' in name:
-            return False, f"Name '{name}' cannot start/end with hyphen or contain consecutive hyphens"
-        # Check name length (max 64 characters per spec)
+            return False, f"name '{name}'はハイフンで始まる/終わる、または連続したハイフンを含むことはできません"
+        # name長をチェック（仕様上の最大64文字）
         if len(name) > 64:
-            return False, f"Name is too long ({len(name)} characters). Maximum is 64 characters."
+            return False, f"nameが長すぎます（{len(name)}文字）。最大は64文字です。"
 
-    # Extract and validate description
+    # descriptionを抽出して検証
     description = frontmatter.get('description', '')
     if not isinstance(description, str):
-        return False, f"Description must be a string, got {type(description).__name__}"
+        return False, f"descriptionは文字列でなければなりません（{type(description).__name__}が指定されています）"
     description = description.strip()
     if description:
-        # Check for angle brackets
+        # 山括弧をチェック
         if '<' in description or '>' in description:
-            return False, "Description cannot contain angle brackets (< or >)"
-        # Check description length (max 1024 characters per spec)
+            return False, "descriptionには山括弧（<または>）を含めることはできません"
+        # description長をチェック（仕様上の最大1024文字）
         if len(description) > 1024:
-            return False, f"Description is too long ({len(description)} characters). Maximum is 1024 characters."
+            return False, f"descriptionが長すぎます（{len(description)}文字）。最大は1024文字です。"
 
-    return True, "Skill is valid!"
+    return True, "スキルは有効です！"
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
-        print("Usage: python quick_validate.py <skill_directory>")
+        print("使用方法: python quick_validate.py <skill_directory>")
         sys.exit(1)
-    
+
     valid, message = validate_skill(sys.argv[1])
     print(message)
     sys.exit(0 if valid else 1)
