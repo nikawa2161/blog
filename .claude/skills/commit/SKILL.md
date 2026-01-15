@@ -1,5 +1,6 @@
 ---
-description: 変更を適切な粒度に分割してコミットします。
+name: commit
+description: 変更を適切な粒度に分割してコミットします。コード変更完了時に自動的に提案します。
 allowed-tools: Bash(git:*), Read
 model: sonnet
 ---
