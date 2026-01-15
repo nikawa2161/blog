@@ -2,7 +2,6 @@
 name: issue
 description: GitHub ISSUEを作成します。ユーザーがISSUEの作成を依頼したときに使用します。
 allowed-tools: Read, Bash(gh:*)
-user-invocable: true
 ---
 
 # GitHub ISSUE作成
