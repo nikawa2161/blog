@@ -9,44 +9,44 @@
 **厳格な要件の場合（APIレスポンスやデータフォーマットなど）:**
 
 ```markdown
-## Report structure
+## レポート構成
 
-ALWAYS use this exact template structure:
+必ずこの正確なテンプレート構成を使用してください:
 
-# [Analysis Title]
+# [分析タイトル]
 
-## Executive summary
-[One-paragraph overview of key findings]
+## 要約
+[主要な発見事項の1段落での概要]
 
-## Key findings
-- Finding 1 with supporting data
-- Finding 2 with supporting data
-- Finding 3 with supporting data
+## 主要な発見事項
+- 裏付けデータを含む発見事項1
+- 裏付けデータを含む発見事項2
+- 裏付けデータを含む発見事項3
 
-## Recommendations
-1. Specific actionable recommendation
-2. Specific actionable recommendation
+## 推奨事項
+1. 具体的で実行可能な推奨事項
+2. 具体的で実行可能な推奨事項
 ```
 
 **柔軟なガイダンスの場合（適応が有用な場合）:**
 
 ```markdown
-## Report structure
+## レポート構成
 
-Here is a sensible default format, but use your best judgment:
+これは妥当なデフォルト形式ですが、最善の判断を使用してください:
 
-# [Analysis Title]
+# [分析タイトル]
 
-## Executive summary
-[Overview]
+## 要約
+[概要]
 
-## Key findings
-[Adapt sections based on what you discover]
+## 主要な発見事項
+[発見した内容に基づいてセクションを調整]
 
-## Recommendations
-[Tailor to the specific context]
+## 推奨事項
+[特定のコンテキストに合わせて調整]
 
-Adjust sections as needed for the specific analysis type.
+特定の分析タイプに応じて必要に応じてセクションを調整してください。
 ```
 
 ## 例示パターン
@@ -54,29 +54,29 @@ Adjust sections as needed for the specific analysis type.
 出力品質が例を見ることに依存するスキルの場合、入力/出力のペアを提供します:
 
 ```markdown
-## Commit message format
+## コミットメッセージ形式
 
-Generate commit messages following these examples:
+以下の例に従ってコミットメッセージを生成します:
 
-**Example 1:**
-Input: Added user authentication with JWT tokens
-Output:
+**例1:**
+入力: JWTトークンを使用したユーザー認証を追加
+出力:
 ```
-feat(auth): implement JWT-based authentication
+feat(auth): JWTベースの認証を実装
 
-Add login endpoint and token validation middleware
-```
-
-**Example 2:**
-Input: Fixed bug where dates displayed incorrectly in reports
-Output:
-```
-fix(reports): correct date formatting in timezone conversion
-
-Use UTC timestamps consistently across report generation
+ログインエンドポイントとトークン検証ミドルウェアを追加
 ```
 
-Follow this style: type(scope): brief description, then detailed explanation.
+**例2:**
+入力: レポートで日付が正しく表示されないバグを修正
+出力:
+```
+fix(reports): タイムゾーン変換の日付フォーマットを修正
+
+レポート生成全体でUTCタイムスタンプを一貫して使用
+```
+
+このスタイルに従ってください: type(scope): 簡潔な説明、その後詳細な説明。
 ```
 
 例はClaudeが望ましいスタイルと詳細レベルを、説明だけよりも明確に理解するのに役立ちます。
