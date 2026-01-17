@@ -27,6 +27,7 @@ bun run lint
 
 ## ドキュメント参照
 
+- 開発フロー: @doc/development-flow.md（**必読**: ブランチ作成はmainから）
 - コミットメッセージ規約: @doc/commit-convention.md
 - treeコマンドとREADME.md更新: @doc/tree-command.md（構造変更時にtreeコマンドを実行してREADME.mdを更新）
 

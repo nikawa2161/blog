@@ -82,3 +82,5 @@ EOF
 - `git log main..HEAD --format="%B"` で全コミットメッセージ（詳細含む）を取得
 - `gh pr create` のHEREDOCでは `'EOF'` とシングルクォートで囲む
 - **必ず** `.github/PULL_REQUEST_TEMPLATE.md` を読み込んでテンプレート形式を確認すること
+- **重要**: コミットメッセージから `Co-Authored-By:` の行を除外する（プロジェクトの規約では不要）
+- コミット規約は `@doc/commit-convention.md` を参照
