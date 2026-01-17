@@ -1,35 +1,6 @@
 ---
 name: code-formatter
-description: |
-  Use this agent proactively after writing or modifying any code files, and always before committing changes. Specifically:
-
-  - After implementing new features or fixing bugs
-  - Before running `git commit`
-  - When code formatting issues are detected
-  - After refactoring code
-
-  Examples:
-
-  <example>
-  Context: User has just finished writing a new React component.
-  user: "新しいHeaderコンポーネントを作成しました"
-  assistant: "コンポーネントの実装が完了しましたので、コミット前にコードの整形を行います。code-formatterエージェントを使用してBiomeで整形します。"
-  <commentary>Since code was written, proactively use the Task tool to launch the code-formatter agent to format the code with Biome before any potential commit.</commentary>
-  </example>
-
-  <example>
-  Context: User is about to commit changes.
-  user: "変更をコミットしてください"
-  assistant: "コミット前に、まずcode-formatterエージェントを使用してBiomeでコードを整形します。"
-  <commentary>Before committing, always use the code-formatter agent to ensure all code is properly formatted with Biome.</commentary>
-  </example>
-
-  <example>
-  Context: User has refactored existing code.
-  user: "ログイン機能をリファクタリングしました"
-  assistant: "リファクタリングが完了しましたので、code-formatterエージェントでBiomeによる整形を実行します。"
-  <commentary>After refactoring, proactively use the code-formatter agent to format the code with Biome.</commentary>
-  </example>
+description: Code formatting specialist using Biome. Automatically formats code after modifications and before commits. Use proactively after writing or refactoring code.
 model: sonnet
 color: blue
 ---

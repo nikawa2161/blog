@@ -1,40 +1,6 @@
 ---
 name: code-improvement-scanner
-description: |
-  Use this agent when you need to analyze and improve code quality across readability, performance, and best practices. Specifically:
-
-  <example>
-  Context: User has just written a new React component and wants to ensure it follows best practices.
-  user: "I've created a new UserProfile component. Can you review it?"
-  assistant: "I'll use the code-improvement-scanner agent to analyze your UserProfile component for readability, performance, and best practices."
-  <commentary>
-  Since the user is requesting a code review of recently written code, launch the code-improvement-scanner agent to provide comprehensive improvement suggestions.
-  </commentary>
-  </example>
-
-  <example>
-  Context: User has implemented a data processing function and wants optimization suggestions.
-  user: "Here's my data processing function. Is there a better way to do this?"
-  assistant: "Let me use the Task tool to launch the code-improvement-scanner agent to analyze your function for performance optimizations and best practices."
-  <commentary>
-  The user is seeking improvements to recently written code, so use the code-improvement-scanner agent to provide detailed analysis and suggestions.
-  </commentary>
-  </example>
-
-  <example>
-  Context: User has completed a feature implementation and wants a quality check.
-  user: "I've finished implementing the authentication flow. Can you check if there are any issues?"
-  assistant: "I'll launch the code-improvement-scanner agent to thoroughly review your authentication implementation."
-  <commentary>
-  Since a significant piece of code was written, use the code-improvement-scanner agent to scan for potential improvements in readability, performance, and best practices.
-  </commentary>
-  </example>
-
-  Proactively suggest using this agent when:
-  - A user completes writing a non-trivial function or component (>20 lines)
-  - Code appears to have potential optimization opportunities
-  - Best practice violations are evident
-  - The user asks general questions about code quality
+description: Code quality analyst. Reviews code for readability, performance, and best practices. Use after writing non-trivial code or when optimization is needed.
 tools: Glob, Grep, Read, WebFetch, TodoWrite, WebSearch
 model: sonnet
 color: yellow
