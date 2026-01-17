@@ -1,8 +1,6 @@
 ---
 name: pr
 description: 現在のブランチ名からGitHub ISSUEの情報を取得し、PRを作成します。コミット完了後に自動的に提案します。
-allowed-tools: Read, Bash(git:*), Bash(gh:*)
-model: haiku
 ---
 
 現在のブランチ名からGitHub ISSUEの情報を取得し、PRを作成してください。
