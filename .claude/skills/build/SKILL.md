@@ -1,8 +1,6 @@
 ---
 name: build
 description: ビルドを実行します。PR作成前やマージ前に自動的に提案します。
-allowed-tools: Bash(bun:*)
-model: haiku
 ---
 
 ビルドを実行してください。
