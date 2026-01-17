@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import tocbot from "tocbot";
 
 type TocProps = {
@@ -14,47 +14,38 @@ export default function Toc({
 	headingSelector = "h2, h3, h4",
 	tocSelector = "#toc",
 }: TocProps) {
-	const initialized = useRef(false);
-
 	useEffect(() => {
-		if (!initialized.current) {
-			tocbot.init({
-				// 目次を表示するコンテナ
-				tocSelector,
-				// 目次の対象となるコンテンツ
-				contentSelector,
-				// 目次に含める見出し要素
-				headingSelector,
-				// 見出しの階層を示すためのHTML要素
-				hasInnerContainers: true,
-				// スクロール時のスムーズスクロール
-				scrollSmooth: true,
-				// 目次のリンククラス
-				linkClass: "toc-link",
-				// アクティブなリンククラス
-				activeLinkClass: "is-active-link",
-				// 目次のリストクラス
-				listClass: "toc-list",
-				// アクティブなリストアイテムクラス
-				activeListItemClass: "is-active-li",
-				// 階層を持つリストクラス
-				listItemClass: "toc-list-item",
-				// 最初の見出しレベルを1に固定
-				orderedList: false,
-				// スクロールオフセット
-				// scrollSmoothOffset: -70,
-				// 目次の深さを制限
-				collapseDepth: 3,
-			});
-
-			initialized.current = true;
-		}
+		tocbot.init({
+			// 目次を表示するコンテナ
+			tocSelector,
+			// 目次の対象となるコンテンツ
+			contentSelector,
+			// 目次に含める見出し要素
+			headingSelector,
+			// 見出しの階層を示すためのHTML要素
+			hasInnerContainers: true,
+			// スクロール時のスムーズスクロール
+			scrollSmooth: true,
+			// 目次のリンククラス
+			linkClass: "toc-link",
+			// アクティブなリンククラス
+			activeLinkClass: "is-active-link",
+			// 目次のリストクラス
+			listClass: "toc-list",
+			// アクティブなリストアイテムクラス
+			activeListItemClass: "is-active-li",
+			// 階層を持つリストクラス
+			listItemClass: "toc-list-item",
+			// 最初の見出しレベルを1に固定
+			orderedList: false,
+			// スクロールオフセット
+			// scrollSmoothOffset: -70,
+			// 目次の深さを制限
+			collapseDepth: 3,
+		});
 
 		return () => {
-			if (initialized.current) {
-				tocbot.destroy();
-				initialized.current = false;
-			}
+			tocbot.destroy();
 		};
 	}, [contentSelector, headingSelector, tocSelector]);
 
