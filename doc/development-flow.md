@@ -66,9 +66,7 @@ git add <ファイル>
 # コミット
 git commit -m "type: 件名
 
-本文（必要に応じて）
-
-Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
+本文（必要に応じて）"
 ```
 
 lefthookによる自動チェックが実行されます。
